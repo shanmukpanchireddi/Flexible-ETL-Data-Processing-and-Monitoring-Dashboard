@@ -1,0 +1,6 @@
+transaction_id,amount,currency
+t1,10,gbp
+t2,7,jpy
+t2,7,jpy
+,5,usd
+t3,12x,eur

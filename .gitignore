@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Local generated outputs
+clean.csv
+rejected.csv
+outputs/
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Local session/accountability files
+SESSION_LOG
+SESSION_LOG.md
+
+# macOS
+.DS_Store
