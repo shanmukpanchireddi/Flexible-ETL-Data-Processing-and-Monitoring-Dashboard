@@ -1,308 +1,364 @@
 # Flexible ETL Data Processing and Monitoring Dashboard
 
-A Python-based ETL (Extract, Transform, Load) application that processes CSV datasets, applies configurable data-quality checks, separates accepted and rejected records, and provides an interactive Streamlit dashboard to monitor processing results. SQLite is used to store transaction-mode results for database verification.
+An interactive ETL (Extract, Transform, Load) application built with Python, Pandas, Streamlit, and SQLite. The dashboard allows users to upload CSV datasets, validate and clean records, identify data-quality issues, monitor processing results, and download accepted and rejected data.
+
+**Live Demo:** https://shanmuk.streamlit.app/
+
+**GitHub Repository:** https://github.com/shanmukpanchireddi/Flexible-ETL-Data-Processing-and-Monitoring-Dashboard
+
+---
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Problem Statement](#problem-statement)
-- [Objectives](#objectives)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [System Architecture](#system-architecture)
-- [ETL Workflow](#etl-workflow)
-- [Processing Modes](#processing-modes)
-- [Validation Rules](#validation-rules)
-- [Dashboard Screenshots](#dashboard-screenshots)
-- [Project Structure](#project-structure)
-- [Installation and Setup](#installation-and-setup)
-- [How to Run the Application](#how-to-run-the-application)
-- [How to Use the Dashboard](#how-to-use-the-dashboard)
-- [Sample Input and Expected Results](#sample-input-and-expected-results)
-- [Database Storage](#database-storage)
-- [Output Files](#output-files)
-- [Error Handling and Limitations](#error-handling-and-limitations)
-- [Future Enhancements](#future-enhancements)
-- [Learning Outcomes](#learning-outcomes)
-- [Author](#author)
+1. [Project Overview](#1-project-overview)
+2. [Problem Statement](#2-problem-statement)
+3. [Project Objectives](#3-project-objectives)
+4. [Technologies Used](#4-technologies-used)
+5. [System Architecture](#5-system-architecture)
+6. [Project Workflow](#6-project-workflow)
+7. [Application Features](#7-application-features)
+8. [Processing Modes](#8-processing-modes)
+9. [Data Validation and Transformation](#9-data-validation-and-transformation)
+10. [Database Design](#10-database-design)
+11. [Screenshots](#11-screenshots)
+12. [Project Structure](#12-project-structure)
+13. [Installation and Setup](#13-installation-and-setup)
+14. [How to Use the Dashboard](#14-how-to-use-the-dashboard)
+15. [Output and Monitoring](#15-output-and-monitoring)
+16. [Testing and Verification](#16-testing-and-verification)
+17. [Deployment](#17-deployment)
+18. [Limitations and Future Enhancements](#18-limitations-and-future-enhancements)
+19. [Learning Outcomes](#19-learning-outcomes)
+20. [Author](#20-author)
 
-## Project Overview
+---
 
-The Flexible ETL Data Processing and Monitoring Dashboard is designed to demonstrate how raw CSV data can be processed into a cleaner, more usable format through a structured data pipeline.
+## 1. Project Overview
 
-In real-world applications, datasets may contain missing values, duplicate records, invalid numeric values, inconsistent formatting, or other data-quality problems. Processing such data manually can be time-consuming and error-prone.
+Data is often collected in CSV files from different applications and business systems. Before that data can be used for reporting or analytics, it may need to be cleaned, validated, transformed, and stored.
 
-This project provides an interactive interface where users can preview CSV data, select a processing mode, execute the pipeline, inspect accepted and rejected records, review summary metrics, and download cleaned data.
+This project implements a small, interactive ETL workflow that helps users perform these tasks through a web-based dashboard.
 
-The application combines Python-based data processing with a Streamlit dashboard and SQLite database storage.
+The application supports two processing modes:
 
-## Problem Statement
+- **Generic CSV Mode:** Process different CSV datasets using configurable validation rules.
+- **Transaction Mode:** Process transaction data using predefined transaction-specific validation rules.
 
-Raw datasets often contain inconsistencies that make them unsuitable for analysis or further processing. Applications that consume this data need a reliable way to identify invalid records and distinguish them from records that pass the selected validation rules.
+After processing, the application displays a summary of the results, separates accepted and rejected records, and provides downloadable CSV files. SQLite is used to store processing results.
 
-The goal of this project is to build a simple, interactive ETL application that demonstrates data extraction, transformation, validation, and loading while making the results visible to users.
+The dashboard is deployed using Streamlit Community Cloud.
 
-## Objectives
+## 2. Problem Statement
 
-- Build an ETL pipeline for CSV data processing.
-- Provide a browser-based interface for uploading and previewing datasets.
-- Support generic CSV processing with user-selected validation checks.
-- Retain a transaction-specific mode with predefined validation rules.
-- Separate accepted records from rejected records.
-- Display processing metrics, including input, accepted, and rejected row counts.
-- Allow users to inspect rejection reasons where available.
-- Store transaction-mode results in an SQLite database.
-- Provide downloadable cleaned CSV output.
+Raw datasets can contain missing values, duplicate records, invalid numeric values, inconsistent formatting, and other quality issues.
 
-## Features
+Handling these issues manually can be repetitive and error-prone. It can also be difficult to determine how many records passed validation, which records failed, and why they were rejected.
 
-### 1. CSV Upload and Preview
+The objective of this project is to develop a simple ETL monitoring dashboard that makes data validation and processing results easier to inspect.
 
-- Upload a CSV file through the Streamlit interface.
-- Preview source data before processing.
-- Display the input row count and number of columns.
-- Use the included sample dataset to test the application.
+## 3. Project Objectives
 
-### 2. Flexible CSV Processing
+- Build an interactive dashboard for uploading CSV datasets.
+- Preview input data before processing.
+- Implement configurable validation for generic datasets.
+- Implement predefined validation for transaction datasets.
+- Identify invalid and duplicate records.
+- Clean selected formatting issues, such as surrounding whitespace.
+- Separate accepted and rejected records.
+- Display processing summaries and data-quality information.
+- Allow users to download the processing results.
+- Store processing results in an SQLite database.
+- Deploy the dashboard so that it can be accessed through a public URL.
 
-The generic processing mode supports CSV datasets with different column names and structures, provided the file is readable and contains a header row.
-
-Users can select appropriate validation checks and fields based on the dataset.
-
-The application does not automatically understand the meaning of every column. The selected rules must match the dataset being processed.
-
-### 3. Transaction Validation
-
-The transaction mode applies the original project's transaction-specific validation rules, including transaction ID checks, amount validation, currency validation, and duplicate transaction ID detection.
-
-### 4. Accepted and Rejected Records
-
-After processing, records are separated into:
-
-- **Accepted records:** Records that pass the selected validation rules.
-- **Rejected records:** Records that fail one or more validation rules.
-
-The dashboard allows users to inspect the results. Rejection reasons are available for the transaction-specific validation workflow.
-
-### 5. Interactive Dashboard
-
-The Streamlit interface presents:
-
-- Source data preview.
-- Processing status.
-- Input row count.
-- Accepted row count.
-- Rejected row count.
-- Acceptance rate.
-- Accepted and rejected record tables.
-- Data profiling information, where supported.
-- SQLite storage totals and recent database records in transaction mode.
-
-### 6. Downloadable Output
-
-Users can download the cleaned CSV generated by the processing run and use it for further analysis or processing.
-
-### 7. SQLite Database Verification
-
-In transaction mode, the application stores accepted and rejected transaction records in SQLite. The dashboard displays stored-record counts and provides expandable sections for inspecting recent database records.
-
-## Technologies Used
+## 4. Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| Python | Core programming language |
-| Streamlit | Interactive web dashboard |
-| Pandas | CSV and tabular data processing |
-| SQLite | Local relational database storage |
-| SQL | Table creation, data loading, and querying |
-| CSV | Input and output data format |
-| Git and GitHub | Version control and source code hosting |
+| Python | Main programming language |
+| Pandas | CSV handling, DataFrame operations, cleaning, and validation |
+| Streamlit | Interactive dashboard and web interface |
+| SQLite | Local relational database for storing processing results |
+| SQL | Database schema, queries, and data verification |
+| Git | Version control |
+| GitHub | Source code hosting and project documentation |
+| Streamlit Community Cloud | Public dashboard deployment |
 
-## System Architecture
+## 5. System Architecture
 
-The application follows a straightforward ETL architecture.
+The application follows a straightforward ETL workflow.
 
 ```text
-             CSV Dataset
-                  |
-                  v
-           1. EXTRACT
-       Read and preview data
-                  |
-                  v
-          2. TRANSFORM
-     Normalize selected fields
-       and prepare records
-                  |
-                  v
-           3. VALIDATE
-      Apply selected data rules
-                  |
-           +------+------+
-           |             |
-           v             v
-     Accepted Data   Rejected Data
-           |             |
-           +------+------+
-                  |
-                  v
-             4. LOAD
-       Save supported outputs
-                  |
-          +-------+-------+
-          |               |
-          v               v
-    Clean CSV Output   SQLite Storage
-                       (transaction mode)
-          |
-          v
-   Streamlit Dashboard
-   Results and Metrics
+             USER
+              |
+              v
+       Streamlit Dashboard
+              |
+              v
+        Upload CSV File
+              |
+              v
+       Preview Input Data
+              |
+              v
+       Select Processing Mode
+          /          \
+         /            \
+        v              v
+  Generic CSV      Transaction
+     Mode              Mode
+        \              /
+         \            /
+              v
+      Validate and Clean
+              |
+              v
+      Separate the Records
+          /          \
+         v            v
+     Accepted       Rejected
+      Records        Records
+          \          /
+           \        /
+              v
+       Processing Summary
+              |
+        +-----+------+
+        |            |
+        v            v
+    CSV Downloads  SQLite Storage
 ```
 
-The generic and transaction modes have different validation and storage behavior. SQLite storage described above applies to the transaction-specific workflow.
+The Generic CSV and Transaction modes use different validation logic. The selected mode determines how records are checked and stored.
 
-## ETL Workflow
+## 6. Project Workflow
 
-### Step 1: Extract
+### Step 1: Upload the dataset
 
-The application reads the uploaded CSV file or the included sample dataset.
+The user uploads a CSV file through the Streamlit interface. Sample CSV files are also included in the repository for trying the transaction workflow.
 
-It displays a preview so users can inspect the column names and records before running the pipeline.
+### Step 2: Preview the source data
 
-### Step 2: Transform
+The application reads the CSV into a Pandas DataFrame and displays a preview so the user can inspect its columns and records.
 
-The application prepares the data for validation. Depending on the selected processing mode and fields, this may include normalizing selected values and preparing records for the applicable checks.
+### Step 3: Choose the processing mode
 
-### Step 3: Validate
+The user selects either Generic CSV Mode or Transaction Mode.
 
-The application applies the configured checks in generic mode or the predefined transaction rules in transaction mode.
+### Step 4: Configure or apply validation rules
 
-Records are categorized as accepted or rejected according to the checks performed.
+In Generic CSV Mode, the user configures relevant validation settings, including required fields and numeric fields.
 
-### Step 4: Load
+In Transaction Mode, the application applies its predefined transaction-specific rules.
 
-The application presents the results through the dashboard and makes the cleaned CSV available for download.
+### Step 5: Clean and validate records
 
-In transaction mode, accepted and rejected records are also stored in SQLite so the stored data can be verified.
+The application performs the checks associated with the selected mode. Records that pass the applicable checks are accepted; records that fail are rejected with validation information.
 
-## Processing Modes
+### Step 6: Review the results
 
-### Generic CSV Mode
+The dashboard displays processing metrics, accepted records, rejected records, and relevant data-quality information.
 
-Generic mode is designed for datasets that do not follow the original transaction schema.
+### Step 7: Download the results
 
-It can be used to explore CSV files containing student, customer, inventory, sales, or other tabular data, provided the applicable fields and validation checks are configured appropriately.
+The user can download the accepted and rejected records as CSV files.
 
-The actual validation behavior depends on the selected checks. A successful run does not necessarily mean that every business-specific rule for the dataset has been satisfied.
+### Step 8: Store and inspect results
 
-### Transaction Mode
+The application writes processing results to SQLite using the storage logic associated with the selected processing mode.
 
-Transaction mode retains the original transaction-specific rules and database workflow.
+## 7. Application Features
 
-It checks transaction IDs, numeric amounts, three-letter currency codes, and duplicate transaction IDs according to the implemented validation logic.
+### CSV Upload and Preview
 
-This mode is useful for demonstrating a complete ETL workflow with predefined rules and persistent SQLite storage.
+- Upload CSV datasets through the dashboard.
+- Preview source records before processing.
+- Inspect the dataset's columns and structure.
 
-## Validation Rules
+### Configurable Validation
 
-The following transaction-specific checks are implemented in the original pipeline.
+- Configure required fields in Generic CSV Mode.
+- Configure numeric fields to validate.
+- Detect duplicate records using the selected validation logic.
+- Identify records that fail the configured checks.
+
+### Data Cleaning
+
+- Trim surrounding whitespace where applicable.
+- Apply the transformations implemented for the selected mode.
+- Separate accepted records from rejected records.
+
+### ETL Monitoring
+
+- View processing summary cards.
+- Review accepted and rejected record counts.
+- Inspect data-quality information and validation outcomes.
+- Review stored results through the dashboard's database section.
+
+### CSV Downloads
+
+- Download accepted records.
+- Download rejected records.
+- Inspect the output files independently of the dashboard.
+
+### SQLite Persistence
+
+- Store processing results in SQLite.
+- Keep transaction results and generic records in their respective storage structures.
+- Use SQL queries to inspect stored data.
+
+## 8. Processing Modes
+
+### 8.1 Generic CSV Mode
+
+Generic CSV Mode is intended for CSV files with different column structures.
+
+Instead of requiring every uploaded file to follow one fixed business schema, the user configures the relevant validation rules for the dataset.
+
+The mode supports checks such as:
+
+- Required-field validation.
+- Numeric-field validation.
+- Duplicate detection.
+- Whitespace cleaning.
+- Accepted and rejected record separation.
+
+**Example:** Consider a CSV file containing `employee_id`, `name`, and `salary`. A user could configure `employee_id` and `name` as required fields and `salary` as a numeric field.
+
+The application checks the records against the configured rules. It does not automatically infer every possible business rule from arbitrary column names.
+
+### 8.2 Transaction Mode
+
+Transaction Mode uses the transaction-specific validation implemented in the project.
+
+The included `raw.csv` sample dataset can be used to explore the transaction workflow. The pipeline checks transaction records against its predefined requirements, processes valid records, and separates rejected records.
+
+The included sample is designed to demonstrate issues such as duplicate transaction IDs, missing identifiers, and invalid amount values.
+
+With the supplied sample data and the original validation logic, the expected result is **2 accepted records and 3 rejected records**.
+
+This expected count applies to the supplied sample dataset and its corresponding validation rules, not to every uploaded file.
+
+## 9. Data Validation and Transformation
+
+Data validation helps determine whether a record satisfies the rules defined for its processing mode.
 
 | Check | Purpose |
 |---|---|
-| Transaction ID validation | Identifies missing or invalid transaction IDs |
-| Amount validation | Checks whether the amount is a valid numeric value |
-| Currency validation | Checks the currency field against the expected three-letter format |
-| Duplicate detection | Identifies duplicate transaction IDs within a processing run |
-| Rejection tracking | Records why a transaction was rejected |
+| Required-field validation | Identifies records with missing required values |
+| Numeric validation | Identifies values that cannot be interpreted as valid numbers under the configured rules |
+| Duplicate detection | Identifies duplicate records or identifiers according to the selected mode |
+| Whitespace cleaning | Removes surrounding whitespace where implemented |
+| Transaction-specific validation | Applies the project's predefined transaction requirements |
 
-The exact rules and rejection behavior are determined by the implementation in `etl.py`. Generic mode uses the validation checks selected for the uploaded dataset.
+### Accepted Records
 
-## Dashboard Screenshots
+Accepted records pass the validation rules applied during the current run.
 
-Screenshots help users understand the application without running it first.
+### Rejected Records
 
-Create a folder named `screenshots` in the repository and add screenshots of your actual working dashboard.
+Rejected records fail one or more applicable checks. Where implemented, the application records information explaining the rejection.
 
-### 1. Main Dashboard and CSV Preview
+Keeping accepted and rejected data separate makes it easier to inspect quality issues and correct source datasets.
 
-![Main dashboard and CSV preview](screenshots/Source data preview.png)
+**Important:** Validation rules differ between Generic CSV Mode and Transaction Mode. A rule enabled in one mode should not be assumed to apply identically in the other.
 
-*Shows the application interface, processing modes, CSV upload area, and source data preview.*
+## 10. Database Design
 
-### 2. ETL Run Summary
+SQLite is used for persistent storage of processing results.
 
-![ETL run summary](screenshots/Run summary.png)
+### Transaction storage
 
-*Shows the input, accepted, and rejected row counts, acceptance rate, and processed records.*
+The transaction workflow uses the following tables:
 
-### 3. SQLite Database Verification
+- `clean_transactions`: Stores accepted transaction records.
+- `rejected_transactions`: Stores rejected transaction records.
 
-![SQLite database verification](screenshots/SQL storage.png)
+The transaction storage code is implemented in `sqlite_load.py`.
 
-*Shows the transaction-mode database totals and the expandable sections for recent clean and rejected records.*
+### Generic CSV storage
 
-**Note:** The screenshot paths above are placeholders. Add your own screenshots using these filenames, or change the Markdown paths to match your actual filenames.
+Generic CSV records are stored in the `generic_etl_records` table. The generic storage implementation keeps the record data in JSON form so that different CSV column structures can be represented.
 
-## Project Structure
+### Database workflow
+
+1. Process the uploaded dataset.
+2. Separate accepted and rejected records.
+3. Pass the relevant results to the storage functions.
+4. Persist the records in the corresponding SQLite tables.
+5. Inspect stored results using SQL queries or the dashboard's supported database views.
+
+The generic and transaction workflows use different storage structures. The transaction tables should not be assumed to contain generic-mode records.
+
+## 11. Screenshots
+
+The following screenshots illustrate the main parts of the application.
+
+### Dashboard and Source Data Preview
+
+![Dashboard and source data preview](screenshots/dashboard-preview.png)
+
+This screenshot shows the dashboard and an example of the source dataset before or during processing.
+
+### ETL Run Summary
+
+![ETL run summary](screenshots/etl-run-summary.png)
+
+This screenshot shows the processing summary and the results displayed by the dashboard.
+
+### SQLite Storage
+
+![SQLite storage](screenshots/sqlite-database.png)
+
+This screenshot shows the database-related section and stored processing results.
+
+## 12. Project Structure
 
 ```text
 Flexible-ETL-Data-Processing-and-Monitoring-Dashboard/
 │
-├── app.py
-├── etl.py
-├── sqlite_load.py
-├── requirements.txt
-├── README.md
-├── raw.csv
-├── raw_bad.csv
-├── queries.sql
-├── analytics_queries.sql
-├── model_schema.sql
-├── model_load.sql
-├── model_verification.sql
+├── app.py                  # Streamlit dashboard and user workflow
+├── etl.py                  # Transaction-specific ETL and validation logic
+├── sqlite_load.py          # Transaction SQLite storage functions
+├── etl.db                  # Local SQLite database file
 │
-├── docs/
-│   ├── model_design.md
-│   └── project_walkthrough.md
+├── raw.csv                 # Sample transaction dataset
+├── raw_bad.csv             # Sample dataset containing problematic data
 │
-├── tests/
+├── model_schema.sql        # Database schema SQL
+├── model_load.sql          # Database loading SQL
+├── model_verification.sql  # Database verification SQL
+├── analytics_queries.sql   # Analytics-related SQL queries
+├── queries.sql             # Additional SQL queries
 │
-├── .github/
-│   └── workflows/
+├── requirements.txt        # Python dependencies
+├── README.md               # Project documentation
+├── .gitignore              # Files excluded from Git
 │
-└── screenshots/
-    ├── dashboard-preview.png
-    ├── etl-run-summary.png
-    └── sqlite-database.png
+├── screenshots/
+│   ├── dashboard-preview.png
+│   ├── etl-run-summary.png
+│   └── sqlite-database.png
+│
+├── tests/                  # Project tests
+├── docs/                   # Supporting documentation
+└── .github/                # GitHub-related configuration
 ```
 
-The structure above describes the main project files and intended screenshot folder. Keep only files and folders that actually exist in your repository. The `screenshots/` folder must be created and populated separately if it does not already exist.
+The structure above describes the main files and directories. Additional files may be present in the repository.
 
-### Important Files
+## 13. Installation and Setup
 
-- `app.py` — Streamlit dashboard and user interface.
-- `etl.py` — ETL processing and validation logic.
-- `sqlite_load.py` — SQLite database initialization and transaction result loading.
-- `requirements.txt` — Python package dependencies.
-- `raw.csv` — Sample transaction dataset.
-- `raw_bad.csv` — Sample data containing invalid records.
-- `queries.sql` — SQL queries used by the project.
-- `analytics_queries.sql` — Additional SQL analytics queries.
-- `model_schema.sql`, `model_load.sql`, and `model_verification.sql` — SQL scripts for the project's documented database workflow.
-
-## Installation and Setup
+Follow these steps to run the project on your own computer.
 
 ### Prerequisites
 
-Install the following before running the application:
+Install:
 
-- Python 3.10 or a compatible Python version supported by the dependencies.
+- Python.
 - Git, if you want to clone the repository.
 - A code editor such as Visual Studio Code.
-- A modern web browser.
 
-### Step 1: Clone the Repository
+### Step 1: Clone the repository
 
 Open a terminal and run:
 
@@ -310,9 +366,13 @@ Open a terminal and run:
 git clone https://github.com/shanmukpanchireddi/Flexible-ETL-Data-Processing-and-Monitoring-Dashboard.git
 ```
 
-Navigate into the cloned project directory. If the repository contains a nested project folder, enter the directory containing `app.py` and `requirements.txt`.
+### Step 2: Enter the project directory
 
-### Step 2: Create a Virtual Environment
+```bash
+cd Flexible-ETL-Data-Processing-and-Monitoring-Dashboard
+```
+
+### Step 3: Create a virtual environment
 
 On Windows:
 
@@ -326,154 +386,157 @@ Activate it:
 .\.venv\Scripts\Activate.ps1
 ```
 
-If PowerShell blocks activation, you can run the environment's Python executable directly instead.
+If PowerShell does not allow activation, use a Command Prompt terminal and run:
 
-### Step 3: Install Dependencies
+```bat
+.venv\Scripts\activate.bat
+```
 
-Run this command from the folder containing `requirements.txt`:
+### Step 4: Install dependencies
 
-```powershell
+```bash
 python -m pip install -r requirements.txt
 ```
 
-### Step 4: Start the Dashboard
+### Step 5: Start the dashboard
 
-Run:
-
-```powershell
+```bash
 python -m streamlit run app.py
 ```
 
-Streamlit will display a Live Demo, usually:
+### Step 6: Open the local application
+
+Streamlit will display a local URL in the terminal, typically:
 
 ```text
-https://shanmuk.streamlit.app
+http://localhost:8501
 ```
 
 Open the displayed URL in your browser.
 
-## How to Use the Dashboard
+## 14. How to Use the Dashboard
 
-1. Start the Streamlit application.
-2. Choose Generic CSV mode or Transaction mode.
-3. Upload a CSV file, or select the included sample dataset if that option is available.
-4. Inspect the source data preview.
-5. In generic mode, configure the validation checks and fields appropriate for your data.
-6. In transaction mode, review the predefined transaction validation rules.
-7. Click the relevant **Run ETL pipeline** button.
-8. Review the run summary and accepted records.
-9. Inspect rejected records and their rejection reasons where available.
-10. Download the cleaned CSV.
-11. In transaction mode, inspect the SQLite storage totals and recent database records.
+1. Open the live application or start it locally.
+2. Upload a CSV file.
+3. Preview the source dataset.
+4. Select Generic CSV Mode or Transaction Mode.
+5. In Generic CSV Mode, configure the validation settings appropriate for the uploaded dataset.
+6. Run the processing workflow using the dashboard's controls.
+7. Review the accepted and rejected record counts.
+8. Inspect the resulting records and data-quality information.
+9. Download the accepted and rejected CSV files as needed.
+10. Review the available SQLite storage information.
 
-## Sample Input and Expected Results
+For an initial test, use `raw.csv` to explore the transaction workflow. Use another CSV with a different column structure to explore the configurable Generic CSV Mode.
 
-The included `raw.csv` file contains sample transaction data with valid records, duplicate IDs, a missing ID, and an invalid amount.
+## 15. Output and Monitoring
 
-Example:
+The dashboard provides several useful outputs.
 
-```csv
-transaction_id,amount,currency
-t1,10,gbp
-t2,7,jpy
-t2,7,jpy
-,5,usd
-t3,12x,eur
+| Output | Description |
+|---|---|
+| Processing summary | Shows the results of an ETL run |
+| Accepted records | Records that pass the applicable validation rules |
+| Rejected records | Records that fail one or more applicable checks |
+| Data-quality information | Helps users inspect issues in the dataset |
+| Clean CSV download | Downloadable accepted data |
+| Rejected CSV download | Downloadable rejected data |
+| SQLite storage | Persistent storage for processing results |
+
+The precise counts and validation outcomes depend on the uploaded dataset and the rules selected for the processing mode.
+
+## 16. Testing and Verification
+
+The repository includes a `tests/` directory for project tests and sample CSV files for exploring the workflows.
+
+To run the tests, install the project dependencies and use:
+
+```bash
+python -m pytest
 ```
 
-When processed using the transaction-specific rules, the expected classification is:
+This command assumes that `pytest` is installed and that the repository's tests are configured to run with it. If it is not included in `requirements.txt`, install it separately before running the tests.
 
-| Record | Issue | Result |
-|---|---|---|
-| `t1,10,gbp` | Valid transaction | Accepted |
-| `t2,7,jpy` | First occurrence of the ID | Accepted |
-| `t2,7,jpy` | Duplicate ID in the same run | Rejected |
-| `,5,usd` | Missing transaction ID | Rejected |
-| `t3,12x,eur` | Invalid numeric amount | Rejected |
+### Manual verification checklist
 
-Expected summary for this sample:
+- [ ] The dashboard starts successfully.
+- [ ] A CSV file can be uploaded and previewed.
+- [ ] Generic CSV Mode accepts configurable validation settings.
+- [ ] Transaction Mode processes the sample transaction dataset.
+- [ ] Accepted and rejected records are separated.
+- [ ] CSV download controls work.
+- [ ] SQLite storage receives the relevant processing results.
+- [ ] The screenshots display correctly on GitHub.
+- [ ] The deployed application opens and can process a sample dataset.
 
-- Input rows: 5
-- Accepted rows: 2
-- Rejected rows: 3
-- Acceptance rate: 40%
+## 17. Deployment
 
-These results apply to the sample data and transaction-specific rules. Different input data or configured validation rules can produce different results.
+The dashboard is deployed using Streamlit Community Cloud.
 
-## Database Storage
+**Live application:** https://shanmuk.streamlit.app/
 
-The transaction-mode workflow uses SQLite, a lightweight relational database that stores data in a local database file.
+To deploy your own copy:
 
-The project creates tables for accepted and rejected transactions. The schema includes transaction fields, run identifiers, and rejection reasons where applicable.
+1. Push the application source code to a GitHub repository.
+2. Open Streamlit Community Cloud.
+3. Connect the GitHub repository.
+4. Select the appropriate branch and `app.py` as the application entry point.
+5. Configure the Python dependencies from `requirements.txt`.
+6. Deploy the application.
+7. Open the generated public URL and test the main workflow.
 
-The dashboard displays stored-record totals and allows users to inspect recent records.
+Deployment availability and behavior depend on the hosting environment and its configuration.
 
-Database totals can include records from previous runs. Therefore, the number of records stored in SQLite may be greater than the number processed in the most recent run.
+**Storage note:** The SQLite database used by a locally running application is separate from the database used by a cloud deployment. A local database file should not be assumed to synchronize with the deployed app. Persistence of files written by a hosted application depends on the hosting environment.
 
-Generic CSV mode should not be assumed to use the same transaction-specific storage schema.
+## 18. Limitations and Future Enhancements
 
-## Output Files
+### Current scope
 
-Depending on the selected processing mode, the application can provide:
+- CSV is the primary input format.
+- Generic validation depends on the rules configured by the user.
+- Transaction validation is based on predefined transaction-specific logic.
+- The application is designed as a small interactive ETL demonstration rather than a distributed production data platform.
+- Generic and transaction records use different SQLite storage structures.
 
-- A cleaned CSV containing accepted records.
-- A set of rejected records available for inspection.
-- Run summary metrics.
-- Rejection reasons for transaction-mode records.
-- SQLite-stored transaction results in transaction mode.
+### Potential future enhancements
 
-The cleaned CSV is intended to provide a more consistent dataset for downstream analysis.
+- Support for Excel, JSON, and additional data formats.
+- More configurable validation rules.
+- Improved validation error categorization.
+- ETL run history and comparison across runs.
+- Additional charts for data-quality trends.
+- More comprehensive automated tests.
+- Persistent managed database storage for cloud deployment.
+- Larger-dataset processing and performance improvements.
 
-## Error Handling and Limitations
+These are possible future improvements, not claims about existing functionality.
 
-- Uploaded files must be readable CSV files with a header row.
-- The CSV columns must be appropriate for the selected validation rules.
-- Generic mode does not automatically infer every dataset's business meaning.
-- Validation results depend on the configured checks and implemented rules.
-- Transaction-specific validation is designed for the original transaction schema.
-- SQLite storage and database verification apply to transaction mode.
-- Local database totals can accumulate across multiple runs.
-- The application is a demonstration project and is not intended to replace a production-grade data integration platform.
-- The application runs locally unless separately deployed to a hosting service.
+## 19. Learning Outcomes
 
-## Future Enhancements
+This project provides practical experience with:
 
-Possible improvements include:
+- Understanding the Extract, Transform, and Load workflow.
+- Reading and manipulating CSV data with Pandas.
+- Designing configurable data-validation logic.
+- Handling duplicate, missing, and invalid values.
+- Separating accepted and rejected records.
+- Building interactive dashboards with Streamlit.
+- Storing and inspecting data using SQLite and SQL.
+- Organizing Python application code into separate modules.
+- Using Git and GitHub for source-code management.
+- Deploying a Python dashboard for public access.
 
-- Add support for Excel files and additional input formats.
-- Provide configurable rules for missing values, data types, and duplicate handling.
-- Add more detailed data-quality reports.
-- Support configurable database schemas for generic datasets.
-- Add data visualizations for record quality and validation results.
-- Add automated unit and integration tests.
-- Add user authentication and access controls.
-- Deploy the dashboard to a cloud hosting platform.
-- Add automated CI checks and deployment workflows.
-
-These are potential enhancements and should not be considered implemented features unless they are added to the code.
-
-## Learning Outcomes
-
-This project demonstrates practical experience with:
-
-- ETL pipeline design.
-- CSV ingestion and data cleaning.
-- Data validation and rejection handling.
-- Python application development.
-- Streamlit dashboard development.
-- SQLite database operations.
-- SQL-based data inspection.
-- Separating data-processing logic from the user interface.
-- Version control and project documentation.
-
-## Author
+## 20. Author
 
 **Shanmukha Rao Panchireddi**
 
-GitHub: [@shanmukpanchireddi](https://github.com/shanmukpanchireddi)
+GitHub: https://github.com/shanmukpanchireddi
 
-Project Repository: [Flexible ETL Data Processing and Monitoring Dashboard](https://github.com/shanmukpanchireddi/Flexible-ETL-Data-Processing-and-Monitoring-Dashboard)
+Project Repository: https://github.com/shanmukpanchireddi/Flexible-ETL-Data-Processing-and-Monitoring-Dashboard
+
+Live Demo: https://shanmuk.streamlit.app/
 
 ---
 
-If you find this project useful for learning ETL concepts, CSV data processing, Python, or Streamlit dashboards, feel free to explore the source code and adapt it for educational purposes.
+If you find this project useful for learning Python, ETL workflows, CSV validation, SQL, or Streamlit dashboards, feel free to explore the source code and adapt it for educational purposes.
